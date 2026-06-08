@@ -1,26 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Student Management System</title>
+    <title>Login</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <nav>
         <a href="index.html">Home</a>
         <a href="login.html">Login</a>
         <a href="register.html">Register</a>
-    </nav>  
+    </nav>
+
     <h2>LOGIN</h2>
-    <form action="dashboard.html" method="GET">
+
+    <form onsubmit="validation(event)" method="GET">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
-        <br><br>
+
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-        <br><br>
+
         <button type="submit">Login</button>
+        <hr>
+        <div class="form-footer">
+            <p>Don't have an account? <a href="register.html">Register here</a></p>
+        </div>
     </form>
 </body>
+
+<script>
+    function validation(event) {
+        event.preventDefault();
+
+        const usernameInput = document.getElementById("username").value;
+        const passwordInput = document.getElementById("password").value;
+        const userData = localStorage.getItem("user");
+        if (!userData) {
+            alert("No registered account found. Please register first.");
+            return;
+        }
+        const obj = JSON.parse(userData);
+        if (usernameInput !== obj.name) {
+            alert("username not found");
+            return;
+        }
+
+        if (passwordInput !== obj.pass) {
+            alert("password is incorrect");
+            return;
+        }
+        alert("login successful");
+        window.location.href = "dashboard.html";
+    }
+</script>
+
 </html>

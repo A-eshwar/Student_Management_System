@@ -1,44 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>View Students - Student Management System</title>
     <style>
-        #edit{
-            color:blue;
+        .edit-btn {
+            color: blue;
             text-decoration: none;
-            padding:5px;
+            padding: 5px;
             border-radius: 5px;
+            display: inline-block;
         }
-        #edit:hover {
+
+        .edit-btn:hover {
             text-decoration: none;
-            background-color:white;
+            background-color: white;
             color: blue;
         }
-        #delete{
+
+        .delete-btn {
             color: red;
             text-decoration: none;
-            padding:5px;
+            padding: 5px;
             border-radius: 5px;
+            display: inline-block;
         }
-        #delete:hover {
+
+        .delete-btn:hover {
             text-decoration: none;
-            background-color:white;
+            background-color: white;
             color: red;
         }
     </style>
 </head>
+
 <body>
     <nav>
         <a href="dashboard.html">Dashboard</a>
         <a href="add_student.html">Add Student</a>
         <a href="view_student.html">View Students</a>
-        <a href="logout.html">Logout</a>    
+        <a href="logout.html">Logout</a>
     </nav>
     <h2>VIEW STUDENTS</h2>
-    <table border="1">
+    <table border="1" id="studentTable">
         <tr>
             <th>ID</th>
             <th>Name</th>
@@ -47,46 +54,40 @@
             <th>Edit</th>
             <th>Delete</th>
         </tr>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>John Doe</td>
-            <td>20</td>
-            <td>9.3</td>
-            <td><a href="edit_student.html" id="edit">EDIT</a></td>
-            <td><a href="delete_student.html" id="delete">DELETE</a></td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Jane Smith</td>
-            <td>22</td>
-            <td>8.7</td>
-            <td><a href="edit_student.html" id="edit">EDIT</a></td>
-            <td><a href="delete_student.html" id="delete">DELETE</a></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Emily Johnson</td>
-            <td>19</td>
-            <td>9.0</td>
-            <td><a href="edit_student.html" id="edit">EDIT</a></td>
-            <td><a href="delete_student.html" id="delete">DELETE</a></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Michael Brown</td>
-            <td>21</td>
-            <td>8.5</td>
-            <td><a href="edit_student.html" id="edit">EDIT</a></td>
-            <td><a href="delete_student.html" id="delete">DELETE</a></td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>Sarah</td>
-            <td>20</td>
-            <td>9.2</td>
-            <td><a href="edit_student.html" id="edit">EDIT</a></td>
-            <td><a href="delete_student.html" id="delete">DELETE</a></td>
     </table>
 </body>
+<script>
+    window.onload = function () {
+        renderTable();
+    };
+    function renderTable() {
+        const table = document.getElementById("studentTable");
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+        let students = JSON.parse(localStorage.getItem("students")) || [];
+        students.forEach(student => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.age}</td>
+                <td>${student.grade}</td>
+                <td><a href="edit_student.html?id=${student.id}" class="edit-btn">EDIT</a></td>
+                <td><a href="#" onclick="deleteStudent(event, '${student.id}')" class="delete-btn">DELETE</a></td>
+            `;
+            table.appendChild(row);
+        });
+    }
+    function deleteStudent(event, id) {
+        event.preventDefault();
+        if (confirm("Are you sure you want to permanently delete this student?")) {
+            let students = JSON.parse(localStorage.getItem("students")) || [];
+            students = students.filter(student => student.id !== id);
+            localStorage.setItem("students", JSON.stringify(students));
+            renderTable();
+        }
+    }
+</script>
+
 </html>
