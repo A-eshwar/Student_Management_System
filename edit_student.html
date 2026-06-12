@@ -16,9 +16,10 @@
         <a href="logout.html">Logout</a>
     </nav>
     <h2>EDIT STUDENT DETAILS</h2>
-    <form onsubmit="update_student(event)" method="GET">
-        <label for="student_id">Student ID:</label>
-        <input type="text" id="student_id" name="student_id" readonly
+    <form onsubmit="update_student(event)" method="POST">
+        <input type="hidden" id="id" name="id">
+        <label for="rollno">Roll No:</label>
+        <input type="text" id="rollno" name="rollno" readonly
             style="background-color: #e9e9e9; cursor: not-allowed;">
 
         <label for="name">Name:</label>
@@ -37,45 +38,48 @@
     </form>
 </body>
 <script>
-    window.onload = function () {
-        const urlp = new URLSearchParams(window.location.search);
-        const studentId = urlp.get('id');
-        if (!studentId) {
-            alert("No student selected to edit.");
-            window.location.href = "view_student.html";
-            return;
-        }
-        let students = JSON.parse(localStorage.getItem("students")) || [];
-        const student = students.find(s => s.id === studentId);
-        if (student) {
-            document.getElementById("student_id").value = student.id;
-            document.getElementById("name").value = student.name;
-            document.getElementById("age").value = student.age;
-            document.getElementById("email").value = student.email || "";
-            document.getElementById("grade").value = student.grade;
-        } else {
-            alert("Student record could not be found.");
-            window.location.href = "view_student.html";
-        }
-    };
-    function update_student(event) {
-        event.preventDefault();
-        const id = document.getElementById("student_id").value;
-        const name = document.getElementById("name").value;
-        const age = document.getElementById("age").value;
-        const email = document.getElementById("email").value;
-        const grade = document.getElementById("grade").value;
-        let students = JSON.parse(localStorage.getItem("students")) || [];
-        students = students.map(s => {
-            if (s.id === id) {
-                return { id, name, age, email, grade };
-            }
-            return s;
-        });
-        localStorage.setItem("students", JSON.stringify(students));
+window.onload = async function() {
+    const urlp = new URLSearchParams(window.location.search);
+    const id = urlp.get('id');
+
+    if (!id) {
+        alert("No student selected to edit.");
+        window.location.href = "view_student.html";
+        return;
+    }
+    const response = await fetch(`http://localhost:3000/students/${id}`);
+    const student = await response.json();
+    document.getElementById("id").value = student.id;
+    document.getElementById("rollno").value = student.rollno;
+    document.getElementById("name").value = student.name;
+    document.getElementById("age").value = student.age;
+    document.getElementById("email").value = student.email;
+    document.getElementById("grade").value = student.grade;
+};
+
+async function update_student(event) {
+    event.preventDefault();
+
+    const id = document.getElementById("id").value;
+    const rollno = document.getElementById("rollno").value;
+    const name = document.getElementById("name").value;
+    const age = parseInt(document.getElementById("age").value, 10) || 0;
+    const email = document.getElementById("email").value;
+    const grade = document.getElementById("grade").value;
+
+    const upstu = { rollno, name, age, email, grade };
+
+    const response = await fetch(`http://localhost:3000/students/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(upstu)
+    });
+    if (response.ok) {
         alert("Student details updated");
         window.location.href = "view_student.html";
+    } else {
+        alert("Failed to update student details on the server.");
     }
+}
 </script>
 
 </html>

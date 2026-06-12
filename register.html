@@ -26,30 +26,42 @@
         <input type="password" id="confirm_password" name="confirm_password" required>
         <button type="submit">Register</button>
         <hr>
+        <p id="duplicate" style="color: red;"></p>
         <div class="form-footer">
             <p>Already have an account? <a href="login.html">Login here</a></p>
         </div>
     </form>
     <script>
-        function validation(event) {
+        async function validation(event) {
             event.preventDefault();
-            const user = document.getElementById("username").value;
+            const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
             const pass = document.getElementById("password").value;
             const cpass = document.getElementById("confirm_password").value;
-
-            if (pass !== cpass) {
-                alert("Passwords do not match");
-                return;
-            }
             var obj = {
-                "name": user,
+                "name": username,
                 "email": email,
                 "pass": pass
             };
-
-            localStorage.setItem("user", JSON.stringify(obj));
-            window.location.href = "login.html";
+            const result=await fetch("http://localhost:3000/users")
+            const userData=await result.json();
+            const matchedUser = userData.find(user => user.name===username && user.pass===pass)
+            if(matchedUser){
+                alert("username already exist")
+                return;
+            }
+            if(pass===cpass){
+                const res=await fetch("http://localhost:3000/users",{
+                    method:"POST",
+                    body:JSON.stringify(obj)
+                });
+                alert("Registered successfully")
+                window.location.href="login.html";
+            }
+            else{
+                alert("incorrect passwords");
+                return;
+            }
         }
     </script>
 </body>

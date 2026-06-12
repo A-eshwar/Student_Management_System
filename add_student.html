@@ -16,9 +16,9 @@
         <a href="logout.html">Logout</a>
     </nav>
     <h2>ADD STUDENT</h2>
-    <form onsubmit="add_student(event)" method="GET">
-        <label for="student_id">Student ID:</label>
-        <input type="text" id="student_id" name="student_id" required>
+    <form onsubmit="add_student(event)" method="POST">
+        <label for="rollno">Roll No:</label>
+        <input type="text" id="rollno" name="rollno" required>
 
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
@@ -36,25 +36,33 @@
     </form>
 </body>
 <script>
-    function add_student(event) {
+    async function add_student(event) {
         event.preventDefault();
-        const id = document.getElementById("student_id").value;
+        
+        const rollno = document.getElementById("rollno").value;
         const name = document.getElementById("name").value;
         const age = document.getElementById("age").value;
         const email = document.getElementById("email").value;
         const grade = document.getElementById("grade").value;
+        
         const studentObj = {
-            id: id,
+            rollno: rollno,
             name: name,
             age: age,
             email: email,
             grade: grade
         };
-        let students = JSON.parse(localStorage.getItem("students")) || [];
-        students.push(studentObj);
-        localStorage.setItem("students", JSON.stringify(students));
-        alert("Student added successfully!");
-        window.location.href = "view_student.html";
+            const response = await fetch("http://localhost:3000/students", {
+                method: "POST",
+                body: JSON.stringify(studentObj)
+            });
+            
+            if (response.ok) {
+                alert("Student added successfully!");
+                window.location.href = "view_student.html";
+            } else {
+                alert("Failed to add student to the database.");
+            }
     }
 </script>
 

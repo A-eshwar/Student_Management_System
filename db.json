@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "name": "bunny",
+      "email": "bunny@gmail.com",
+      "pass": "123",
+      "id": "ExJPvej7Wl4"
+    },
+    {
+      "name": "bunny",
+      "email": "bunhhw@jfs",
+      "pass": "123",
+      "id": "vrAzo7wANkc"
+    }
+  ],
+  "students": [
+    {
+      "rollno": "12",
+      "name": "eshwar",
+      "age": "21",
+      "email": "bunny@gmail.com",
+      "grade": "9.1",
+      "id": "_xd9080GGEk"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

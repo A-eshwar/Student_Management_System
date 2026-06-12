@@ -33,29 +33,22 @@
 </body>
 
 <script>
-    function validation(event) {
+    async function validation(event) {
         event.preventDefault();
-
-        const usernameInput = document.getElementById("username").value;
-        const passwordInput = document.getElementById("password").value;
-        const userData = localStorage.getItem("user");
-        if (!userData) {
-            alert("No registered account found. Please register first.");
+        const username = document.getElementById("username").value;
+        const pass= document.getElementById("password").value;
+        const result=await fetch("http://localhost:3000/users")
+        const userData=await result.json();
+        const matchedUser = userData.find(user => user.name === username && user.pass === pass)
+        if(matchedUser){
+            alert("Login Successful")
+            window.location.href="dashboard.html";
+        }
+        else{
+            alert("invalid username or password");
             return;
         }
-        const obj = JSON.parse(userData);
-        if (usernameInput !== obj.name) {
-            alert("username not found");
-            return;
-        }
-
-        if (passwordInput !== obj.pass) {
-            alert("password is incorrect");
-            return;
-        }
-        alert("login successful");
-        window.location.href = "dashboard.html";
     }
-</script>
+</script>   
 
 </html>

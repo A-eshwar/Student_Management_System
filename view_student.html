@@ -47,7 +47,7 @@
     <h2>VIEW STUDENTS</h2>
     <table border="1" id="studentTable">
         <tr>
-            <th>ID</th>
+            <th>Roll No</th>
             <th>Name</th>
             <th>Age</th>
             <th>Grade</th>
@@ -60,16 +60,20 @@
     window.onload = function () {
         renderTable();
     };
-    function renderTable() {
+
+    async function renderTable() {
         const table = document.getElementById("studentTable");
+        
         while (table.rows.length > 1) {
             table.deleteRow(1);
         }
-        let students = JSON.parse(localStorage.getItem("students")) || [];
+        const response = await fetch("http://localhost:3000/students");
+        const students = await response.json(); 
+            
         students.forEach(student => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${student.id}</td>
+                <td>${student.rollno}</td>
                 <td>${student.name}</td>
                 <td>${student.age}</td>
                 <td>${student.grade}</td>
@@ -79,13 +83,17 @@
             table.appendChild(row);
         });
     }
-    function deleteStudent(event, id) {
+    async function deleteStudent(event, id) {
         event.preventDefault();
         if (confirm("Are you sure you want to permanently delete this student?")) {
-            let students = JSON.parse(localStorage.getItem("students")) || [];
-            students = students.filter(student => student.id !== id);
-            localStorage.setItem("students", JSON.stringify(students));
-            renderTable();
+            const response = await fetch(`http://localhost:3000/students/${id}`, {
+                method: "DELETE"
+            });    
+            if (response.ok) {
+                renderTable();
+            } else {
+                alert("Failed to delete the student from the server.");
+            }
         }
     }
 </script>
